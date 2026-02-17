@@ -23,6 +23,21 @@ export default function Home() {
             Aplicație de gestiune financiară personală
           </p>
 
+          <div className="flex gap-4 justify-center mb-10">
+            <a
+              href="/register"
+              className="px-8 py-4 bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105"
+            >
+              Înregistrează-te
+            </a>
+            <a
+              href="/login"
+              className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full transition-all duration-300 hover:scale-105"
+            >
+              Login
+            </a>
+          </div>
+
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
             <h2 className="text-2xl font-semibold mb-4 text-gray-900">
               🚀 Ce vom construi în Săptămânile 4-5
