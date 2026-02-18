@@ -1,5 +1,32 @@
 # Session Log
 
+## 2026-02-18 - Lecția 5.1: Upload Logic (CSV/Excel parsing + bulk import)
+
+### Ce s-a făcut
+- Pasul 1: Instalat librării papaparse, xlsx, @types/papaparse (erau deja în package.json din commit anterior, dar npm install util ca demo)
+- Pasul 2: Extins POST `/api/transactions/route.ts` cu bulk import - acceptă array de tranzacții, auto-categorizare cu `autoCategorizeByCategoryName()`, category lookup via Map, batch insert Supabase
+- Pasul 3: Conectat upload form la `file-parser.ts` - detectare extensie (.csv/.xlsx/.xls), parsare automată la selectarea fișierului, state pentru loading/eroare/tranzacții parsate
+- Pasul 4: Preview îmbunătățit - tabel cu 4 coloane (Dată, Descriere, Sumă, Valută), sume colorate roșu/verde, total sub tabel, buton "Importă X tranzacții" dezactivat fără bancă selectată
+- Pasul 5: Conectat butonul Import la API - trimite tranzacții cu bankId, loading pe buton, ecran de succes cu "X importate, Y categorizate", butoane "Încarcă alt fișier" + "Vezi tranzacțiile"
+- Pasul 6: Verificare flow complet - server logs confirmă toate endpoint-urile 200/201
+- Actualizat GHID-5.2 cu Pasul 1 nou: seed automat categorii predefinite (renumerotat 7→8 pași)
+
+### Ce rămâne
+- [ ] Commit + push tot codul S4+S5.1
+- [ ] Lecția 5.2 - Rapoarte, AI Insights și Deploy (8 pași, include seed categorii)
+- [ ] Seed automat categorii predefinite (Pasul 1 din GHID-5.2) - cele 12 categorii din categories-rules.ts
+
+### Commits
+- Niciun commit nou (modificări locale)
+
+### Decizii importante
+- Auto-categorizarea funcționează doar dacă categoriile există în DB-ul utilizatorului - seed automat mutat în lecția 5.2
+- NU folosim `matchUserKeyword()` (Drizzle ORM) - doar `autoCategorizeByCategoryName()` (Supabase REST)
+- Butonul Upload mutat din formular în secțiunea preview (apare doar când ai tranzacții parsate)
+- Normalizare sumă: parser-ul returnează deja suma negativă pentru cheltuieli, API-ul verifică suplimentar type=expense+amount>0
+
+---
+
 ## 2026-02-17 - Lecția 4.3: Transactions List + Upload Form UI
 
 ### Ce s-a făcut
