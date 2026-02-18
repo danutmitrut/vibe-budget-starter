@@ -1,5 +1,41 @@
 # Session Log
 
+## 2026-02-18 - Lecția 5.2: Rapoarte, Pivot Table, AI Coach + Deploy
+
+### Ce s-a făcut
+- Fix auto-categorizare: seed verifică categorii predefinite lipsă (nu doar lista goală)
+- Adăugat keywords delivery (tazz, glovo, foodpanda, bolt food) în categories-rules.ts
+- Suport tip transfer pentru categorii (UI + API validation)
+- Auto-categorizare retroactivă în GET /api/transactions (tranzacții existente fără categorie)
+- Inline category editing pe tabelul tranzacții (adaugă/schimbă/șterge categorie per rând)
+- PATCH endpoint pentru actualizare categorie tranzacție
+- Fix AI Coach: JSON parsing cu strip backticks markdown, error messages specifice
+- Pagină Rapoarte completă: pie chart, bar chart, tabel pivot, AI Coach
+- Tabel pivot v1: cash flow pe luni (cheltuieli/venituri/economii cu progress bars)
+- Tabel pivot v2: REAL pivot categorii x luni cu colorare dinamică 5 nivele
+- Carduri analitice: Top 5 Creșteri + Top 5 Scăderi lunare
+- Toggle procente față de luna anterioară
+- Commit + Push pe GitHub (b6426bb)
+- Deploy pe Vercel (https://vibe-budget-starter.vercel.app)
+- Setat 5 env vars pe Vercel (Supabase URL/Key, Database URL, Anthropic API Key, App URL)
+- Configurat Supabase Auth: site_url + uri_allow_list pentru Vercel
+
+### Ce rămâne
+- [ ] Verificare manuală în browser pe Vercel (login, dashboard, rapoarte, AI Coach)
+- [ ] Lecția 6 - ce urmează în curs (de stabilit)
+
+### Commits
+- `b6426bb` feat: add reports page with pivot table, AI coach, auto-categorization fixes
+
+### Decizii importante
+- Pivot table aliniat la structura din aplicația integrală (categorii x luni, nu cash flow simplu)
+- Colorare celule bazată pe raportul cu media categoriei (5 nivele: critic/ridicat/normal/sub medie/zero)
+- Agregare client-side (nu API route dedicat) - toate datele vin din /api/transactions existent
+- Supabase Auth site_url setat la Vercel URL (nu mai e localhost)
+- Push pe GitHub cu classic token (fine-grained token nu funcționează)
+
+---
+
 ## 2026-02-18 - Lecția 5.1: Upload Logic (CSV/Excel parsing + bulk import)
 
 ### Ce s-a făcut
