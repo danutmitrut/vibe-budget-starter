@@ -157,6 +157,14 @@ export default function DashboardClient({ userEmail, profileName }: DashboardCli
             <p className="font-semibold text-gray-900">Upload</p>
             <p className="text-sm text-gray-500 mt-1">Importă CSV sau Excel</p>
           </Link>
+          <Link
+            href="/dashboard/reports"
+            className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow text-center"
+          >
+            <p className="text-2xl mb-2">📊</p>
+            <p className="font-semibold text-gray-900">Rapoarte</p>
+            <p className="text-sm text-gray-500 mt-1">Grafice cheltuieli și venituri</p>
+          </Link>
         </div>
 
         {/* Empty State */}

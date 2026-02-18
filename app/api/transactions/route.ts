@@ -20,6 +20,52 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error;
 
+    // Auto-categorizare retroactivă: tranzacții fără categorie
+    const uncategorized = (transactions || []).filter(t => !t.category_id);
+    if (uncategorized.length > 0) {
+      const { data: userCategories } = await supabase
+        .from('categories')
+        .select('id, name')
+        .eq('user_id', user.id);
+
+      if (userCategories && userCategories.length > 0) {
+        const categoryMap = new Map<string, string>();
+        for (const cat of userCategories) {
+          categoryMap.set(cat.name.toLowerCase(), cat.id);
+        }
+
+        const updates: { id: string; category_id: string }[] = [];
+        for (const t of uncategorized) {
+          const categoryName = autoCategorizeByCategoryName(t.description);
+          if (categoryName) {
+            const foundId = categoryMap.get(categoryName.toLowerCase());
+            if (foundId) {
+              updates.push({ id: t.id, category_id: foundId });
+            }
+          }
+        }
+
+        if (updates.length > 0) {
+          for (const u of updates) {
+            await supabase
+              .from('transactions')
+              .update({ category_id: u.category_id })
+              .eq('id', u.id);
+          }
+          console.log(`[API/TRANSACTIONS] Auto-categorized ${updates.length} transactions`);
+
+          // Re-fetch cu categoriile actualizate
+          const { data: refreshed } = await supabase
+            .from('transactions')
+            .select('*, banks(id, name, color), categories(id, name, icon, type)')
+            .eq('user_id', user.id)
+            .order('date', { ascending: false });
+
+          return NextResponse.json({ transactions: refreshed || [] });
+        }
+      }
+    }
+
     return NextResponse.json({ transactions: transactions || [] });
   } catch (error) {
     console.error('[API/TRANSACTIONS] GET Error:', error);

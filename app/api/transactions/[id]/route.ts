@@ -1,6 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Neautentificat' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const body = await request.json();
+    const { category_id } = body;
+
+    const { data, error } = await supabase
+      .from('transactions')
+      .update({ category_id: category_id || null })
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .select('*, banks(id, name, color), categories(id, name, icon, type)')
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json({ transaction: data });
+  } catch (error) {
+    console.error('[API/TRANSACTIONS] PATCH Error:', error);
+    return NextResponse.json({ error: 'Eroare server' }, { status: 500 });
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

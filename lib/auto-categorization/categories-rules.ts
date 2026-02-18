@@ -283,12 +283,16 @@ export const CATEGORY_RULES: CategoryRule[] = [
       "concert",
       "teatru",
       "eveniment",
-      // Fast-food
+      // Fast-food & Delivery
       "mcdonald",
       "kfc",
       "burger king",
       "pizza hut",
       "subway",
+      "tazz",
+      "glovo",
+      "foodpanda",
+      "bolt food",
       // Internațional
       "dining",
       "nando",

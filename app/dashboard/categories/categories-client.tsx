@@ -7,7 +7,7 @@ import Link from 'next/link';
 interface Category {
   id: string;
   name: string;
-  type: 'income' | 'expense';
+  type: 'income' | 'expense' | 'transfer';
   icon: string;
   is_system_category: boolean;
   created_at: string;
@@ -21,7 +21,7 @@ export default function CategoriesClient() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formName, setFormName] = useState('');
-  const [formType, setFormType] = useState<'expense' | 'income'>('expense');
+  const [formType, setFormType] = useState<'expense' | 'income' | 'transfer'>('expense');
   const [formIcon, setFormIcon] = useState('📁');
 
   const fetchCategories = async () => {
@@ -109,6 +109,7 @@ export default function CategoriesClient() {
 
   const expenseCategories = categories.filter(c => c.type === 'expense');
   const incomeCategories = categories.filter(c => c.type === 'income');
+  const transferCategories = categories.filter(c => c.type === 'transfer');
 
   if (loading) {
     return (
@@ -222,11 +223,12 @@ export default function CategoriesClient() {
                     </label>
                     <select
                       value={formType}
-                      onChange={(e) => setFormType(e.target.value as 'expense' | 'income')}
+                      onChange={(e) => setFormType(e.target.value as 'expense' | 'income' | 'transfer')}
                       className="px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     >
                       <option value="expense">Cheltuială</option>
                       <option value="income">Venit</option>
+                      <option value="transfer">Transfer</option>
                     </select>
                   </div>
                 )}
@@ -277,6 +279,7 @@ export default function CategoriesClient() {
         {/* Tabele Categorii */}
         {renderTable('Cheltuieli', expenseCategories)}
         {renderTable('Venituri', incomeCategories)}
+        {transferCategories.length > 0 && renderTable('Transferuri', transferCategories)}
       </div>
     </div>
   );

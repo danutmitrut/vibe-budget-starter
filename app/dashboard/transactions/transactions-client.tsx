@@ -49,6 +49,7 @@ export default function TransactionsClient() {
   const [formBankId, setFormBankId] = useState('');
   const [formCategoryId, setFormCategoryId] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [editingCategoryFor, setEditingCategoryFor] = useState<string | null>(null);
 
   const fetchTransactions = async () => {
     try {
@@ -101,6 +102,25 @@ export default function TransactionsClient() {
       fetchTransactions();
     } catch (error) {
       toast.error('Eroare la ștergerea tranzacției');
+    }
+  };
+
+  const handleUpdateCategory = async (transactionId: string, categoryId: string | null) => {
+    try {
+      const res = await fetch(`/api/transactions/${transactionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category_id: categoryId }),
+      });
+      if (!res.ok) throw new Error('Eroare la actualizare');
+      const data = await res.json();
+      setTransactions(prev =>
+        prev.map(t => t.id === transactionId ? data.transaction : t)
+      );
+      setEditingCategoryFor(null);
+      toast.success(categoryId ? 'Categoria a fost actualizată!' : 'Categoria a fost eliminată!');
+    } catch {
+      toast.error('Eroare la actualizarea categoriei');
     }
   };
 
@@ -335,12 +355,50 @@ export default function TransactionsClient() {
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        {t.categories ? (
-                          <span className="text-sm text-gray-700">
-                            {t.categories.icon} {t.categories.name}
-                          </span>
+                        {editingCategoryFor === t.id ? (
+                          <select
+                            autoFocus
+                            defaultValue={t.category_id || ''}
+                            onChange={(e) => handleUpdateCategory(t.id, e.target.value || null)}
+                            onBlur={() => setEditingCategoryFor(null)}
+                            className="px-2 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                          >
+                            <option value="">Fără categorie</option>
+                            {categories.map((c) => (
+                              <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+                            ))}
+                          </select>
+                        ) : t.categories ? (
+                          <div className="flex items-center gap-1">
+                            <span className="text-sm text-gray-700">
+                              {t.categories.icon} {t.categories.name}
+                            </span>
+                            <button
+                              onClick={() => setEditingCategoryFor(t.id)}
+                              className="ml-1 p-0.5 text-gray-400 hover:text-teal-600 transition-colors"
+                              title="Schimbă categoria"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
+                                <path d="M13.488 2.513a1.75 1.75 0 0 0-2.475 0L3.05 10.476a1.75 1.75 0 0 0-.446.79l-.675 2.696a.25.25 0 0 0 .304.304l2.696-.675a1.75 1.75 0 0 0 .79-.446l7.963-7.963a1.75 1.75 0 0 0 0-2.475Z" />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => handleUpdateCategory(t.id, null)}
+                              className="p-0.5 text-gray-400 hover:text-red-500 transition-colors"
+                              title="Elimină categoria"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
+                                <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
+                              </svg>
+                            </button>
+                          </div>
                         ) : (
-                          <span className="text-sm text-gray-400">-</span>
+                          <button
+                            onClick={() => setEditingCategoryFor(t.id)}
+                            className="text-sm text-gray-400 hover:text-teal-600 transition-colors"
+                          >
+                            + Adaugă
+                          </button>
                         )}
                       </td>
                       <td className="px-6 py-4 text-right font-medium text-sm whitespace-nowrap">
